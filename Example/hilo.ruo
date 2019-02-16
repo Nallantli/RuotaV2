@@ -1,0 +1,25 @@
+load "console";
+
+hilo_game : void(min : int, max : int) => {
+    print("Welcome to HiLo!\n");
+    print("Guess numbers between " + cast.str(min) + " and " + cast.str(max) + "\n");
+
+    guess : int = 0;
+    actual : int = rand.int(min, max);
+    attempts : int = 0;
+
+    guess != actual do {
+        attempts = attempts + 1;
+        guess = input.double();
+        guess < actual then {
+            print("Go higher!\n");
+        } else guess > actual then {
+            print("Go lower!\n")
+        };
+    };
+
+    print("You win! The answer was " + cast.str(actual) + "\n");
+    print("It took you " + cast.str(attempts) + " attempts\n");
+};
+
+hilo_game(0, 100);

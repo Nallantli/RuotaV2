@@ -1,0 +1,40 @@
+load "console";
+load "string";
+load "stack";
+
+evalRPN:long(tokens:string[~]) => {
+	s:stack<long> = new stack<long>;
+	t:string in tokens do {
+		t == "+" then {
+			b:long = s.back();
+			s.pop();
+			a:long = s.back();
+			s.pop();
+			s.push(a + b);
+		} else t == "-" then {
+			b:long = s.back();
+			s.pop();
+			a:long = s.back();
+			s.pop();
+			s.push(a - b);
+		} else t == "*" then {
+			b:long = s.back();
+			s.pop();
+			a:long = s.back();
+			s.pop();
+			s.push(a * b);
+		} else t == "/" then {
+			b:long = s.back();
+			s.pop();
+			a:long = s.back();
+			s.pop();
+			s.push(a / b);
+		} else {
+			s.push(cast.long(t));
+		};
+	};
+	return s.back();
+};
+
+tokens:string[~] = ["1", "2", "+", "4", "-"];
+print(cast.str(evalRPN(tokens)) + "\n");

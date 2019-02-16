@@ -1,0 +1,8 @@
+template Test <K> in {
+	value:K;
+	init:void(value:K) => {
+		self.value = value;
+	};
+};
+
+t:Test<int> = new Test<int>(1);
