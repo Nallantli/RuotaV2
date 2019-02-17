@@ -66,7 +66,12 @@ int main(int argc, char *argv[])
 		}
 		myfile.close();
 	}*/
-	RuotaWrapper *wrapper = new RuotaWrapper(argv[0]);
+
+	std::string current_dir = argv[0];
+	while (current_dir.back() != '\\' && current_dir.back() != '/')
+		current_dir.pop_back();
+
+	RuotaWrapper *wrapper = new RuotaWrapper(current_dir + "\\");
 
 	try
 	{

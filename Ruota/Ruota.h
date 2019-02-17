@@ -1,7 +1,7 @@
 #ifndef RUOTA_H
 #define RUOTA_H
 
-#define RUOTA_VERSION	"1.0.1 Alpha"
+#define RUOTA_VERSION	"1.0.2 Alpha"
 
 #include <vector>
 #include <stdexcept>
