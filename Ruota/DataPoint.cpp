@@ -831,12 +831,12 @@ void DataPoint::set(DataPoint dp)
         }
         else if (this->value_object == NULL && !dp.getType().equals(dt))
         {
-            if (dt.proto_object->variables.find("init") != dt.proto_object->variables.end())
+            if (dt.getProtoObject()->variables.find("init") != dt.getProtoObject()->variables.end())
             {
                 std::vector<DataType> params = {dp.getType()};
-                if (dt.proto_object->getVariable("init").getLambda(params).parent != NULL)
+                if (dt.getProtoObject()->getVariable("init").getLambda(params).parent != NULL)
                 {
-                    Scope * object_scope = new Scope(getType().proto_object->parent);
+                    Scope * object_scope = new Scope(getType().getProtoObject()->parent);
                     getType().prototype.back().evaluate(object_scope);
                     setObject(object_scope);
                     getObject()->declareVariable("self", getType());
@@ -894,9 +894,9 @@ Lambda DataPoint::getLambda(std::vector<DataType> args)
                     flag = false;
                     continue;
                 }
-                else if (!current_l.prototype.empty() && current_l.proto_object->variables.find("@") != current_l.proto_object->variables.end())
+                else if (!current_l.prototype.empty() && current_l.getProtoObject()->variables.find("@") != current_l.getProtoObject()->variables.end())
                 {
-                    auto lambda = current_l.proto_object->variables["@"].poly_lambda;
+                    auto lambda = current_l.getProtoObject()->variables["@"].poly_lambda;
                     Lambda candidate(NULL, Node(), {}, {}, DataType());
                     for (auto &l : lambda)
                     {
@@ -912,9 +912,9 @@ Lambda DataPoint::getLambda(std::vector<DataType> args)
                         {
                             if (!current_r.prototype.empty())
                             {
-                                if (current_r.proto_object->variables.find("init") != current_r.proto_object->variables.end())
+                                if (current_r.getProtoObject()->variables.find("init") != current_r.getProtoObject()->variables.end())
                                 {
-                                    DataPoint init = current_r.proto_object->variables["init"];
+                                    DataPoint init = current_r.getProtoObject()->variables["init"];
                                     if (init.getLambda({current_l}).parent == NULL)
                                     {
                                         flag = false;
@@ -964,7 +964,7 @@ std::vector<DataPoint> DataPoint::getVector() const
     return value_vector;
 }
 
-const DataType DataPoint::getType() const
+DataType DataPoint::getType() const
 {
     if (dpn == VAR_REF)
         return value_ref->getType();
@@ -986,7 +986,7 @@ Scope *DataPoint::getObject()
     if (dpn == VAR_REF)
         return value_ref->getObject();
     if (this->value_object == NULL)
-        return this->dt.proto_object;
+        return this->dt.getProtoObject();
     return this->value_object;
 }
 
@@ -1038,5 +1038,6 @@ DataPoint::~DataPoint()
     if (this->value_object != NULL)
     {
         this->value_object->references--;
+        //std::cout << "REF\t" << this->value_object->references << "\t" << getDebug() << "\n";
     }
 }

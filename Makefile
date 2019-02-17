@@ -5,8 +5,8 @@ all: win32
 
 win32: bin/ruota.exe
 
-bin/ruota.exe: Compiled/Main.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o
-	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o $(CFLAGS)
+bin/ruota.exe: Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o
+	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o $(CFLAGS)
 
 Compiled/Main.o: Main.cpp
 	$(CC) Main.cpp -o Compiled/Main.o -c $(CFLAGS)
@@ -34,3 +34,6 @@ Compiled/Node.o: Ruota/Node.cpp
 
 Compiled/DataPoint.o: Ruota/DataPoint.cpp
 	$(CC) Ruota/DataPoint.cpp -o Compiled/DataPoint.o -c $(CFLAGS)
+
+Compiled/DataType.o: Ruota/DataType.cpp
+	$(CC) Ruota/DataType.cpp -o Compiled/DataType.o -c $(CFLAGS)

@@ -13,23 +13,23 @@
 #pragma comment(lib, "User32.lib")
 void setColor(int k)
 {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, k);
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, k);
 }
 #else
 void setColor(int k)
 {
-    printf("\033[3%d;40mH", k);
+	printf("\033[3%d;40mH", k);
 }
 #endif
 
 std::vector<DataPoint> __color(std::vector<DataPoint> args)
 {
-    setColor(args[0].getInt());
-    return {};
+	setColor(args[0].getInt());
+	return {};
 }
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
 	srand(time(0));
 	RuotaWrapper::register_command("console_print", &console_print);
@@ -66,24 +66,33 @@ int main(int argc, char * argv[])
 		}
 		myfile.close();
 	}*/
-
 	RuotaWrapper *wrapper = new RuotaWrapper(argv[0]);
 
 	try
 	{
-		std::string line;
-		do {
-			setColor(12);
-			std::cout << "> ";
-			setColor(7);
-			std::getline(std::cin, line);
-			DataPoint dp = wrapper->evaluate(line);
-			int i = 0;
-			setColor(1);
-			for (auto &d : dp.getVector()) {
-			std::cout << "\t" << i++ << ")\t" << d.getDebug() << "\n";
-			}
-		} while (line != "");
+		if (argc == 1)
+		{
+			std::cout << "Ruota RW - " << RUOTA_VERSION << "\n\n";
+			std::string line;
+			do
+			{
+				setColor(12);
+				std::cout << "> ";
+				setColor(7);
+				std::getline(std::cin, line);
+				DataPoint dp = wrapper->evaluate(line);
+				int i = 0;
+				setColor(1);
+				for (auto &d : dp.getVector())
+				{
+					std::cout << "\t" << i++ << ")\t" << d.getDebug() << "\n";
+				}
+			} while (line != "");
+		}
+		else
+		{
+			DataPoint dp = wrapper->evaluate("load \"" + std::string(argv[1]) + "\"");
+		}
 	}
 	catch (std::runtime_error &e)
 	{

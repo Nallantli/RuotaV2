@@ -263,7 +263,7 @@ DataPoint Node::evaluate(Scope *scope) const
                 else
                     ndt = DataType(
                         scope->getVariable(params[0].values[0]).getType().prototype,
-                        scope->getVariable(params[0].values[0]).getType().proto_object,
+                        scope->getVariable(params[0].values[0]).getType().getProtoObject(),
                         params[0].values[0]);
             }
         }
@@ -318,7 +318,7 @@ DataPoint Node::evaluate(Scope *scope) const
             Node current = params[0];
             while (current.nt == B_OBJ_INDEX)
                 current = current.params[1];
-            ndt = DataType(params[0].evaluate(scope).getType().prototype, params[0].evaluate(scope).getType().proto_object, current.values[0]);
+            ndt = DataType(params[0].evaluate(scope).getType().prototype, params[0].evaluate(scope).getType().getProtoObject(), current.values[0]);
         }
         return scope->declareVariable(values[0], ndt);
     }
@@ -372,10 +372,10 @@ DataPoint Node::evaluate(Scope *scope) const
             a.values.push_back("$");
             auto a_ = a.evaluate(scope);
             DataPoint r(a_.getType());
-            Scope *object_scope = new Scope(a_.getType().proto_object->parent);
+            Scope *object_scope = new Scope(a_.getType().getProtoObject()->parent);
             for (int i = 0; i < a_.getType().qualifiers.size(); i++)
             {
-                object_scope->generics.push_back({a_.getType().proto_object->generics[i].first, a_.getType().qualifiers[i]});
+                object_scope->generics.push_back({a_.getType().getProtoObject()->generics[i].first, a_.getType().qualifiers[i]});
             }
             r.setObject(object_scope);
             r.getObject()->declareVariable("self", r.getType());
@@ -397,10 +397,10 @@ DataPoint Node::evaluate(Scope *scope) const
             a.values.push_back("$");
             auto a_ = a.evaluate(scope);
             DataPoint r(a_.getType());
-            Scope *object_scope = new Scope(a_.getType().proto_object->parent);
+            Scope *object_scope = new Scope(a_.getType().getProtoObject()->parent);
             for (int i = 0; i < a_.getType().qualifiers.size(); i++)
             {
-                object_scope->generics.push_back({a_.getType().proto_object->generics[i].first, a_.getType().qualifiers[i]});
+                object_scope->generics.push_back({a_.getType().getProtoObject()->generics[i].first, a_.getType().qualifiers[i]});
             }
             r.setObject(object_scope);
             r.getObject()->declareVariable("self", r.getType());

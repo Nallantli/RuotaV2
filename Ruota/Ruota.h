@@ -1,6 +1,8 @@
 #ifndef RUOTA_H
 #define RUOTA_H
 
+#define RUOTA_VERSION	"1.0.1 Alpha"
+
 #include <vector>
 #include <stdexcept>
 #include <string>
@@ -77,8 +79,8 @@ enum NodeType
 struct DataType
 {
 	std::string data_type;
-	std::vector<Node> prototype;	
-	Scope *proto_object = NULL;
+	std::vector<Node> prototype;
+	Scope * proto_object = NULL;
 	std::vector<DataType> qualifiers;
 	bool is_array = false;
 	std::vector<unsigned long long> arr_dimensions;
@@ -87,160 +89,35 @@ struct DataType
 	bool is_lambda = false;
 	std::vector<DataType> params;
 
-	DataType(const DataType &dt)
-	{
-		this->prototype = dt.prototype;
-		this->proto_object = dt.proto_object;
-		this->data_type = dt.data_type;
-		this->qualifiers = dt.qualifiers;
-		this->is_array = dt.is_array;
-		this->arr_dimensions = dt.arr_dimensions;
-		this->is_lambda = dt.is_lambda;
-		this->return_type = dt.return_type;
-		this->params = dt.params;
-	}
+	DataType(const DataType &dt);
 
 	// NON-LAMBDA
 	DataType(
 		std::string data_type = "null",
 		std::vector<DataType> qualifiers = {},
 		bool is_array = false,
-		std::vector<unsigned long long> arr_dimensions = {})
-	{
-		this->data_type = data_type;
-		this->qualifiers = qualifiers;
-		this->is_array = is_array;
-		this->arr_dimensions = arr_dimensions;
-		this->is_lambda = false;
-	}
+		std::vector<unsigned long long> arr_dimensions = {});
 
 	DataType(
 		std::vector<Node> prototype,
-		Scope *proto_object,
+		Scope * proto_object,
 		std::string data_type,
 		std::vector<DataType> qualifiers = {},
 		bool is_array = false,
-		std::vector<unsigned long long> arr_dimensions = {})
-	{
-		this->prototype = prototype;
-		this->proto_object = proto_object;
-		this->data_type = data_type;
-		this->qualifiers = qualifiers;
-		this->is_array = is_array;
-		this->arr_dimensions = arr_dimensions;
-		this->is_lambda = false;
-	}
+		std::vector<unsigned long long> arr_dimensions = {});
 	// LAMBDA
 	DataType(
 		std::vector<DataType> return_type,
-		std::vector<DataType> params)
-	{
-		this->is_lambda = true;
-		this->return_type = return_type;
-		this->params = params;
-	}
-
-	const std::string getString() const
-	{
-		std::string s = "";
-		if (!is_lambda)
-		{
-			s += data_type;
-			if (!qualifiers.empty())
-			{
-				s += "<" + qualifiers[0].getString();
-				for (int i = 1; i < qualifiers.size(); i++)
-					s += "," + qualifiers[i].getString();
-				s += ">";
-			}
-			if (is_array)
-			{
-				if (arr_dimensions.empty())
-					s += "[]";
-				else
-				{
-					s += "[" + std::to_string(arr_dimensions[0]);
-					for (int i = 1; i < arr_dimensions.size(); i++)
-						s += "," + std::to_string(arr_dimensions[i]);
-					s += "]";
-				}
-			}
-		}
-		else
-		{
-			s = "(" + return_type[0].getString() + " <- ";
-			if (!params.empty())
-			{
-				s += "[" + params[0].getString();
-				for (int i = 1; i < params.size(); i++)
-					s += "," + params[i].getString();
-				s += "]";
-			}
-			else
-				s += "[]";
-			s += ")";
-		}
-		return s;
-	}
-
-	const DataType getSubType() const
-	{
-		if (arr_dimensions.empty())
-			return DataType("UNDEF");
-		std::vector<unsigned long long> new_dims;
-		for (int i = 1; i < arr_dimensions.size(); i++)
-			new_dims.push_back(arr_dimensions[i]);
-		if (new_dims.empty())
-			return DataType(prototype, proto_object, data_type, qualifiers);
-		else
-			return DataType(prototype, proto_object, data_type, qualifiers, true, new_dims);
-	}
-
-	const bool equals(const DataType &dt) const
-	{
-		return equals(dt.getString());
-	}
-
-	const bool equals(const std::string &s) const
-	{
-		return getString() == s;
-	}
-
-	const bool operator==(const DataType &dt) const
-	{
-		return this->equals(dt);
-	}
-
-	const unsigned long long getFullDim() const
-	{
-		if (arr_dimensions.empty())
-			return 0;
-		unsigned long long mul = 1;
-		for (auto &d : arr_dimensions)
-			mul *= d;
-		return mul;
-	}
-
-	const bool isBaseNumber() const
-	{
-		if (equals("int"))
-			return true;
-		if (equals("long"))
-			return true;
-		if (equals("short"))
-			return true;
-		if (equals("char"))
-			return true;
-		if (equals("bool"))
-			return true;
-		if (equals("double"))
-			return true;
-		if (equals("float"))
-			return true;
-		if (equals("void"))
-			return true;
-		return false;
-	}
+		std::vector<DataType> params);
+	const std::string getString() const;
+	const DataType getSubType() const;
+	const bool equals(const DataType &dt) const;
+	const bool equals(const std::string &s) const;
+	const bool operator==(const DataType &dt) const;
+	const unsigned long long getFullDim() const;
+	const bool isBaseNumber() const;
+	Scope * getProtoObject();
+	~DataType();
 };
 
 struct DataPoint
@@ -312,7 +189,7 @@ struct DataPoint
 	Scope *getObject();
 
 	const std::string getDebug() const;
-	const DataType getType() const;
+	DataType getType() const;
 	DataPoint clone(Scope *) const;
 	DataPoint index(std::vector<DataPoint>);
 	~DataPoint();

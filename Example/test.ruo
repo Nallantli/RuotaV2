@@ -1,8 +1,37 @@
-template Test <K> in {
-	value:K;
-	init:void(value:K) => {
-		self.value = value;
+load "console";
+load "string";
+load "stack";
+
+tokens:string[~] = ["1", "2", "+", "4", "-"];
+
+s:stack<long> = new stack<long>;
+t:string in tokens do {
+	print(t);
+	t == "+" then {
+		b:long = s.back();
+		s.pop();
+		a:long = s.back();
+		s.pop();
+		s.push(a + b);
+	} else t == "-" then {
+		b:long = s.back();
+		s.pop();
+		a:long = s.back();
+		s.pop();
+		s.push(a - b);
+	} else t == "*" then {
+		b:long = s.back();
+		s.pop();
+		a:long = s.back();
+		s.pop();
+		s.push(a * b);
+	} else t == "/" then {
+		b:long = s.back();
+		s.pop();
+		a:long = s.back();
+		s.pop();
+		s.push(a / b);
+	} else {
+		s.push(cast.long(t));
 	};
 };
-
-t:Test<int> = new Test<int>(1);
