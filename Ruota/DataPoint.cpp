@@ -26,34 +26,44 @@ DataPoint::DataPoint(const DataPoint &dp)
     {
         this->dt = dp.dt;
         this->dpn = END_NODE;
-        if (dp.value_object != NULL)
-            this->setObject(dp.value_object);
-        if (dt.equals("int"))
+        switch (str2int(dp.getType().getString().c_str()))
+        {
+        case str2int("int"):
             this->value_int = dp.value_int;
-        if (dt.equals("long"))
+            break;
+        case str2int("long"):
             this->value_long = dp.value_long;
-        if (dt.equals("double"))
-            this->value_double = dp.value_double;
-        if (dt.equals("long"))
-            this->value_long = dp.value_long;
-        if (dt.equals("float"))
-            this->value_float = dp.value_float;
-        if (dt.equals("bool"))
-            this->value_boolean = dp.value_boolean;
-        if (dt.equals("short"))
+            break;
+        case str2int("short"):
             this->value_short = dp.value_short;
-        if (dt.equals("char"))
+            break;
+        case str2int("char"):
             this->value_char = dp.value_char;
-        if (dt.equals("void"))
+            break;
+        case str2int("bool"):
+            this->value_boolean = dp.value_boolean;
+            break;
+        case str2int("double"):
+            this->value_double = dp.value_double;
+            break;
+        case str2int("float"):
+            this->value_float = dp.value_float;
+            break;
+        case str2int("void"):
             this->POINTER = dp.POINTER;
-        if (dt.is_array)
-        {
-            for (int i = 0; i < dp.value_vector.size(); i++)
-                value_vector.push_back(DataPoint(dp.value_vector[i]));
-        }
-        if (dt.is_lambda)
-        {
-            this->poly_lambda = dp.poly_lambda;
+            break;
+        default:
+            if (dp.value_object != NULL)
+                this->setObject(dp.value_object);
+            else if (dt.is_array)
+            {
+                for (int i = 0; i < dp.value_vector.size(); i++)
+                    value_vector.push_back(DataPoint(dp.value_vector[i]));
+            }
+            else if (dt.is_lambda)
+            {
+                this->poly_lambda = dp.poly_lambda;
+            }
         }
     }
 }
@@ -141,35 +151,46 @@ DataPoint DataPoint::add(const DataPoint &dp) const
     DataPoint res;
     res.dt = this->dt;
 
-    if (dt.equals("int"))
+    switch (str2int(dt.getString().c_str()))
+    {
+    case str2int("int"):
         res.value_int = this->getInt() + dp.getInt();
-    else if (dt.equals("long"))
+        break;
+    case str2int("long"):
         res.value_long = this->getLong() + dp.getLong();
-    else if (dt.equals("short"))
+        break;
+    case str2int("short"):
         res.value_short = this->getShort() + dp.getShort();
-    else if (dt.equals("char"))
+        break;
+    case str2int("char"):
         res.value_char = this->getChar() + dp.getChar();
-    else if (dt.equals("bool"))
+        break;
+    case str2int("bool"):
         res.value_boolean = this->getBool() + dp.getBool();
-    else if (dt.equals("double"))
+        break;
+    case str2int("double"):
         res.value_double = this->getDouble() + dp.getDouble();
-    else if (dt.equals("float"))
+        break;
+    case str2int("float"):
         res.value_float = this->getFloat() + dp.getFloat();
-    else if (dt.is_array)
-    {
-        std::vector<DataPoint> elements;
-        for (auto &e : this->getVector())
-            elements.push_back(e);
-        for (auto &e : dp.getVector())
-            elements.push_back(e);
-        DataPoint temp(elements);
-        temp.dt.is_array = true;
-        res.set(temp);
-    }
-    else
-    {
-        std::vector<DataType> args = {dp.getType()};
-        return this->value_object->getVariable("`+").getLambda(args).evaluate({dp});
+        break;
+    default:
+        if (dt.is_array)
+        {
+            std::vector<DataPoint> elements;
+            for (auto &e : this->getVector())
+                elements.push_back(e);
+            for (auto &e : dp.getVector())
+                elements.push_back(e);
+            DataPoint temp(elements);
+            temp.dt.is_array = true;
+            res.set(temp);
+        }
+        else
+        {
+            std::vector<DataType> args = {dp.getType()};
+            return this->value_object->getVariable("`+").getLambda(args).evaluate({dp});
+        }
     }
 
     return res;
@@ -182,22 +203,30 @@ DataPoint DataPoint::sub(const DataPoint &dp) const
     DataPoint res;
     res.dt = this->dt;
 
-    if (dt.equals("int"))
-        res.value_int = this->getInt() - dp.getInt();
-    else if (dt.equals("long"))
-        res.value_long = this->getLong() - dp.getLong();
-    else if (dt.equals("short"))
-        res.value_short = this->getShort() - dp.getShort();
-    else if (dt.equals("char"))
-        res.value_char = this->getChar() - dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() - dp.getBool();
-    else if (dt.equals("double"))
-        res.value_double = this->getDouble() - dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_float = this->getFloat() - dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_int = this->getInt() - dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_long = this->getLong() - dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_short = this->getShort() - dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_char = this->getChar() - dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() - dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_double = this->getDouble() - dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_float = this->getFloat() - dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`-").getLambda(args).evaluate({dp});
     }
@@ -212,22 +241,30 @@ DataPoint DataPoint::mul(const DataPoint &dp) const
     DataPoint res;
     res.dt = this->dt;
 
-    if (dt.equals("int"))
-        res.value_int = this->getInt() * dp.getInt();
-    else if (dt.equals("long"))
-        res.value_long = this->getLong() * dp.getLong();
-    else if (dt.equals("short"))
-        res.value_short = this->getShort() * dp.getShort();
-    else if (dt.equals("char"))
-        res.value_char = this->getChar() * dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() * dp.getBool();
-    else if (dt.equals("double"))
-        res.value_double = this->getDouble() * dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_float = this->getFloat() * dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_int = this->getInt() * dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_long = this->getLong() * dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_short = this->getShort() * dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_char = this->getChar() * dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() * dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_double = this->getDouble() * dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_float = this->getFloat() * dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`*").getLambda(args).evaluate({dp});
     }
@@ -242,22 +279,30 @@ DataPoint DataPoint::div(const DataPoint &dp) const
     DataPoint res;
     res.dt = this->dt;
 
-    if (dt.equals("int"))
-        res.value_int = this->getInt() / dp.getInt();
-    else if (dt.equals("long"))
-        res.value_long = this->getLong() / dp.getLong();
-    else if (dt.equals("short"))
-        res.value_short = this->getShort() / dp.getShort();
-    else if (dt.equals("char"))
-        res.value_char = this->getChar() / dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() / dp.getBool();
-    else if (dt.equals("double"))
-        res.value_double = this->getDouble() / dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_float = this->getFloat() / dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_int = this->getInt() / dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_long = this->getLong() / dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_short = this->getShort() / dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_char = this->getChar() / dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() / dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_double = this->getDouble() / dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_float = this->getFloat() / dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`/").getLambda(args).evaluate({dp});
     }
@@ -267,27 +312,35 @@ DataPoint DataPoint::div(const DataPoint &dp) const
 DataPoint DataPoint::mod(const DataPoint &dp) const
 {
     if (dpn == VAR_REF)
-        return value_ref->div(dp);
+        return value_ref->mod(dp);
 
     DataPoint res;
     res.dt = this->dt;
 
-    if (dt.equals("int"))
-        res.value_int = this->getInt() % dp.getInt();
-    else if (dt.equals("long"))
-        res.value_long = this->getLong() % dp.getLong();
-    else if (dt.equals("short"))
-        res.value_short = this->getShort() % dp.getShort();
-    else if (dt.equals("char"))
-        res.value_char = this->getChar() % dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() % dp.getBool();
-    else if (dt.equals("double"))
-        res.value_double = (int)this->getDouble() % (int)dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_float = (int)this->getFloat() % (int)dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_int = this->getInt() % dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_long = this->getLong() % dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_short = this->getShort() % dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_char = this->getChar() % dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() % dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_double = (long)this->getDouble() % (long)dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_float = (long)this->getFloat() % (long)dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`%").getLambda(args).evaluate({dp});
     }
@@ -302,22 +355,30 @@ DataPoint DataPoint::pow(const DataPoint &dp) const
     DataPoint res;
     res.dt = this->dt;
 
-    if (dt.equals("int"))
-        res.value_int = std::pow(this->getInt(), dp.getInt());
-    else if (dt.equals("long"))
-        res.value_long = std::pow(this->getLong(), dp.getLong());
-    else if (dt.equals("short"))
-        res.value_short = std::pow(this->getShort(), dp.getShort());
-    else if (dt.equals("char"))
-        res.value_char = std::pow(this->getChar(), dp.getChar());
-    else if (dt.equals("bool"))
-        res.value_boolean = std::pow(this->getBool(), dp.getBool());
-    else if (dt.equals("double"))
-        res.value_double = std::pow(this->getDouble(), dp.getDouble());
-    else if (dt.equals("float"))
-        res.value_float = std::pow(this->getFloat(), dp.getFloat());
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_int = std::pow(this->getInt(), dp.getInt());
+        break;
+    case str2int("long"):
+        res.value_long = std::pow(this->getLong(), dp.getLong());
+        break;
+    case str2int("short"):
+        res.value_short = std::pow(this->getShort(), dp.getShort());
+        break;
+    case str2int("char"):
+        res.value_char = std::pow(this->getChar(), dp.getChar());
+        break;
+    case str2int("bool"):
+        res.value_boolean = std::pow(this->getBool(), dp.getBool());
+        break;
+    case str2int("double"):
+        res.value_double = std::pow(this->getDouble(), dp.getDouble());
+        break;
+    case str2int("float"):
+        res.value_float = std::pow(this->getFloat(), dp.getFloat());
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`**").getLambda(args).evaluate({dp});
     }
@@ -332,22 +393,30 @@ DataPoint DataPoint::less(const DataPoint &dp) const
     DataPoint res;
     res.dt = DataType("bool");
 
-    if (dt.equals("int"))
-        res.value_boolean = this->getInt() < dp.getInt();
-    else if (dt.equals("long"))
-        res.value_boolean = this->getLong() < dp.getLong();
-    else if (dt.equals("short"))
-        res.value_boolean = this->getShort() < dp.getShort();
-    else if (dt.equals("char"))
-        res.value_boolean = this->getChar() < dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() < dp.getBool();
-    else if (dt.equals("double"))
-        res.value_boolean = this->getDouble() < dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_boolean = this->getFloat() < dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_boolean = this->getInt() < dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_boolean = this->getLong() < dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_boolean = this->getShort() < dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_boolean = this->getChar() < dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() < dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_boolean = this->getDouble() < dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_boolean = this->getFloat() < dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`<").getLambda(args).evaluate({dp});
     }
@@ -362,22 +431,30 @@ DataPoint DataPoint::more(const DataPoint &dp) const
     DataPoint res;
     res.dt = DataType("bool");
 
-    if (dt.equals("int"))
-        res.value_boolean = this->getInt() > dp.getInt();
-    else if (dt.equals("long"))
-        res.value_boolean = this->getLong() > dp.getLong();
-    else if (dt.equals("short"))
-        res.value_boolean = this->getShort() > dp.getShort();
-    else if (dt.equals("char"))
-        res.value_boolean = this->getChar() > dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() > dp.getBool();
-    else if (dt.equals("double"))
-        res.value_boolean = this->getDouble() > dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_boolean = this->getFloat() > dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_boolean = this->getInt() > dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_boolean = this->getLong() > dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_boolean = this->getShort() > dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_boolean = this->getChar() > dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() > dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_boolean = this->getDouble() > dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_boolean = this->getFloat() > dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`>").getLambda(args).evaluate({dp});
     }
@@ -392,22 +469,30 @@ DataPoint DataPoint::eless(const DataPoint &dp) const
     DataPoint res;
     res.dt = DataType("bool");
 
-    if (dt.equals("int"))
-        res.value_boolean = this->getInt() <= dp.getInt();
-    else if (dt.equals("long"))
-        res.value_boolean = this->getLong() <= dp.getLong();
-    else if (dt.equals("short"))
-        res.value_boolean = this->getShort() <= dp.getShort();
-    else if (dt.equals("char"))
-        res.value_boolean = this->getChar() <= dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() <= dp.getBool();
-    else if (dt.equals("double"))
-        res.value_boolean = this->getDouble() <= dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_boolean = this->getFloat() <= dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_boolean = this->getInt() <= dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_boolean = this->getLong() <= dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_boolean = this->getShort() <= dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_boolean = this->getChar() <= dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() <= dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_boolean = this->getDouble() <= dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_boolean = this->getFloat() <= dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`<=").getLambda(args).evaluate({dp});
     }
@@ -422,22 +507,30 @@ DataPoint DataPoint::emore(const DataPoint &dp) const
     DataPoint res;
     res.dt = DataType("bool");
 
-    if (dt.equals("int"))
-        res.value_boolean = this->getInt() >= dp.getInt();
-    else if (dt.equals("long"))
-        res.value_boolean = this->getLong() >= dp.getLong();
-    else if (dt.equals("short"))
-        res.value_boolean = this->getShort() >= dp.getShort();
-    else if (dt.equals("char"))
-        res.value_boolean = this->getChar() >= dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() >= dp.getBool();
-    else if (dt.equals("double"))
-        res.value_boolean = this->getDouble() >= dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_boolean = this->getFloat() >= dp.getFloat();
-    else
+    switch (str2int(dt.getString().c_str()))
     {
+    case str2int("int"):
+        res.value_boolean = this->getInt() >= dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_boolean = this->getLong() >= dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_boolean = this->getShort() >= dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_boolean = this->getChar() >= dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() >= dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_boolean = this->getDouble() >= dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_boolean = this->getFloat() >= dp.getFloat();
+        break;
+    default:
         std::vector<DataType> args = {dp.getType()};
         return this->value_object->getVariable("`>=").getLambda(args).evaluate({dp});
     }
@@ -453,42 +546,53 @@ DataPoint DataPoint::equals(DataPoint dp) const
     res.dt = DataType("bool");
     res.value_boolean = false;
 
-    if (dt.equals("int"))
-        res.value_boolean = this->getInt() == dp.getInt();
-    else if (dt.equals("long"))
-        res.value_boolean = this->getLong() == dp.getLong();
-    else if (dt.equals("short"))
-        res.value_boolean = this->getShort() == dp.getShort();
-    else if (dt.equals("char"))
-        res.value_boolean = this->getChar() == dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() == dp.getBool();
-    else if (dt.equals("double"))
-        res.value_boolean = this->getDouble() == dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_boolean = this->getFloat() == dp.getFloat();
-    else if (dt.is_array && dp.getType().is_array)
+    switch (str2int(dt.getString().c_str()))
     {
-        if (this->value_vector.size() != dp.getVector().size())
-            res.value_boolean = false;
-        else
+    case str2int("int"):
+        res.value_boolean = this->getInt() == dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_boolean = this->getLong() == dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_boolean = this->getShort() == dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_boolean = this->getChar() == dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() == dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_boolean = this->getDouble() == dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_boolean = this->getFloat() == dp.getFloat();
+        break;
+    default:
+        if (dt.is_array)
         {
-            res.value_boolean = true;
-            for (int i = 0; i < this->value_vector.size(); i++)
+            if (this->value_vector.size() != dp.getVector().size())
+                res.value_boolean = false;
+            else
             {
-                if (!this->value_vector[i].equals(dp.getVector()[i]).getBool())
+                res.value_boolean = true;
+                for (int i = 0; i < this->value_vector.size(); i++)
                 {
-                    res.value_boolean = false;
-                    break;
+                    if (!this->value_vector[i].equals(dp.getVector()[i]).getBool())
+                    {
+                        res.value_boolean = false;
+                        break;
+                    }
                 }
             }
+            return res;
         }
-        return res;
-    }
-    else
-    {
-        std::vector<DataType> args = {dp.getType()};
-        return this->value_object->getVariable("`==").getLambda(args).evaluate({dp});
+        else
+        {
+            std::vector<DataType> args = {dp.getType()};
+            return this->value_object->getVariable("`==").getLambda(args).evaluate({dp});
+        }
     }
 
     return res;
@@ -502,42 +606,53 @@ DataPoint DataPoint::nequals(DataPoint dp) const
     res.dt = DataType("bool");
     res.value_boolean = true;
 
-    if (dt.equals("int"))
-        res.value_boolean = this->getInt() != dp.getInt();
-    else if (dt.equals("long"))
-        res.value_boolean = this->getLong() != dp.getLong();
-    else if (dt.equals("short"))
-        res.value_boolean = this->getShort() != dp.getShort();
-    else if (dt.equals("char"))
-        res.value_boolean = this->getChar() != dp.getChar();
-    else if (dt.equals("bool"))
-        res.value_boolean = this->getBool() != dp.getBool();
-    else if (dt.equals("double"))
-        res.value_boolean = this->getDouble() != dp.getDouble();
-    else if (dt.equals("float"))
-        res.value_boolean = this->getFloat() != dp.getFloat();
-    else if (dt.is_array && dp.getType().is_array)
+    switch (str2int(dt.getString().c_str()))
     {
-        if (this->value_vector.size() != dp.getVector().size())
-            res.value_boolean = true;
-        else
+    case str2int("int"):
+        res.value_boolean = this->getInt() != dp.getInt();
+        break;
+    case str2int("long"):
+        res.value_boolean = this->getLong() != dp.getLong();
+        break;
+    case str2int("short"):
+        res.value_boolean = this->getShort() != dp.getShort();
+        break;
+    case str2int("char"):
+        res.value_boolean = this->getChar() != dp.getChar();
+        break;
+    case str2int("bool"):
+        res.value_boolean = this->getBool() != dp.getBool();
+        break;
+    case str2int("double"):
+        res.value_boolean = this->getDouble() != dp.getDouble();
+        break;
+    case str2int("float"):
+        res.value_boolean = this->getFloat() != dp.getFloat();
+        break;
+    default:
+        if (dt.is_array)
         {
-            res.value_boolean = false;
-            for (int i = 0; i < this->value_vector.size(); i++)
+            if (this->value_vector.size() != dp.getVector().size())
+                res.value_boolean = true;
+            else
             {
-                if (!this->value_vector[i].equals(dp.getVector()[i]).getBool())
+                res.value_boolean = true;
+                for (int i = 0; i < this->value_vector.size(); i++)
                 {
-                    res.value_boolean = true;
-                    break;
+                    if (!this->value_vector[i].equals(dp.getVector()[i]).getBool())
+                    {
+                        res.value_boolean = false;
+                        break;
+                    }
                 }
             }
+            return res;
         }
-        return res;
-    }
-    else
-    {
-        std::vector<DataType> args = {dp.getType()};
-        return this->value_object->getVariable("`!=").getLambda(args).evaluate({dp});
+        else
+        {
+            std::vector<DataType> args = {dp.getType()};
+            return this->value_object->getVariable("`!=").getLambda(args).evaluate({dp});
+        }
     }
 
     return res;
@@ -836,7 +951,7 @@ void DataPoint::set(DataPoint dp)
                 std::vector<DataType> params = {dp.getType()};
                 if (dt.getProtoObject()->getVariable("init").getLambda(params).parent != NULL)
                 {
-                    Scope * object_scope = new Scope(getType().getProtoObject()->parent);
+                    Scope *object_scope = new Scope(getType().getProtoObject()->parent);
                     getType().prototype.back().evaluate(object_scope);
                     setObject(object_scope);
                     getObject()->declareVariable("self", getType());
@@ -924,10 +1039,14 @@ Lambda DataPoint::getLambda(std::vector<DataType> args)
                                 {
                                     flag = false;
                                 }
-                            } else {
+                            }
+                            else
+                            {
                                 flag = false;
                             }
-                        } else {
+                        }
+                        else
+                        {
                             flag = false;
                         }
                     }
@@ -978,7 +1097,8 @@ void DataPoint::setObject(Scope *value_object)
     if (this->value_object != NULL)
         this->value_object->references--;
     this->value_object = value_object;
-    this->value_object->references++;
+    if (this->value_object != NULL)
+        this->value_object->references++;
 }
 
 Scope *DataPoint::getObject()

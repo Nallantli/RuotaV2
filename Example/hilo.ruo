@@ -1,7 +1,9 @@
 load "console";
 
 hilo_game : void(min : int, max : int) => {
+    term.color.setfg(term.color.BLUE);
     print("Welcome to HiLo!\n");
+    term.color.setfg(term.color.WHITE);
     print("Guess numbers between " + cast.str(min) + " and " + cast.str(max) + "\n");
 
     guess : int = 0;
@@ -10,12 +12,16 @@ hilo_game : void(min : int, max : int) => {
 
     guess != actual do {
         attempts = attempts + 1;
-        guess = input.double();
+        print("> ");
+        term.color.setfg(term.color.GREEN);
+        guess = input.int();
+        term.color.setfg(term.color.RED);
         guess < actual then {
             print("Go higher!\n");
         } else guess > actual then {
-            print("Go lower!\n")
+            print("Go lower!\n");
         };
+        term.color.setfg(term.color.WHITE);
     };
 
     print("You win! The answer was " + cast.str(actual) + "\n");

@@ -3,29 +3,29 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <boost/dll/runtime_symbol_info.hpp>
 #include "Ruota/Ruota.h"
 #include "Ruota/Console.h"
 #include "Ruota/FILE_IO/FileIO.h"
 
-#ifdef _WIN32
-#include <windows.h>
-#include <conio.h>
-#pragma comment(lib, "User32.lib")
-void setColor(int k)
+void setForeColor(int k)
 {
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleTextAttribute(hConsole, k);
+	printf("\033[38;5;%dm", k);
 }
-#else
-void setColor(int k)
+void setBackColor(int k)
 {
-	printf("\033[3%d;40mH", k);
+	printf("\033[48;5;%dm", k);
 }
-#endif
 
-std::vector<DataPoint> __color(std::vector<DataPoint> args)
+std::vector<DataPoint> __fore_color(std::vector<DataPoint> args)
 {
-	setColor(args[0].getInt());
+	setForeColor(args[0].getInt());
+	return {};
+}
+
+std::vector<DataPoint> __back_color(std::vector<DataPoint> args)
+{
+	setBackColor(args[0].getInt());
 	return {};
 }
 
@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
 	RuotaWrapper::register_command("console_to_string", &__to_string);
 	RuotaWrapper::register_command("console_to_number", &__to_number);
 	RuotaWrapper::register_command("console_rand", &__rand);
-	RuotaWrapper::register_command("console_color", &__color);
+	RuotaWrapper::register_command("console_fore_color", &__fore_color);
+	RuotaWrapper::register_command("console_back_color", &__back_color);
 
 	RuotaWrapper::register_command("system_dir", &__filesystem_listdir);
 	RuotaWrapper::register_command("system_mkdir", &__filesystem_mkdir);
@@ -67,11 +68,11 @@ int main(int argc, char *argv[])
 		myfile.close();
 	}*/
 
-	std::string current_dir = argv[0];
+	std::string current_dir = boost::dll::program_location().string();
 	while (current_dir.back() != '\\' && current_dir.back() != '/')
 		current_dir.pop_back();
 
-	RuotaWrapper *wrapper = new RuotaWrapper(current_dir + "\\");
+	RuotaWrapper *wrapper = new RuotaWrapper(current_dir);
 
 	try
 	{
@@ -81,13 +82,13 @@ int main(int argc, char *argv[])
 			std::string line;
 			do
 			{
-				setColor(12);
+				setForeColor(1);
 				std::cout << "> ";
-				setColor(7);
+				setForeColor(7);
 				std::getline(std::cin, line);
 				DataPoint dp = wrapper->evaluate(line);
 				int i = 0;
-				setColor(1);
+				setForeColor(4);
 				for (auto &d : dp.getVector())
 				{
 					std::cout << "\t" << i++ << ")\t" << d.getDebug() << "\n";
@@ -101,7 +102,7 @@ int main(int argc, char *argv[])
 	}
 	catch (std::runtime_error &e)
 	{
-		setColor(12);
+		setForeColor(1);
 		std::cout << e.what() << std::endl;
 	}
 
@@ -110,6 +111,6 @@ int main(int argc, char *argv[])
 
 	delete wrapper;
 
-	setColor(7);
+	setForeColor(7);
 	return 0;
 }

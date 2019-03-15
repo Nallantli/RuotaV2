@@ -1,0 +1,66 @@
+template list<T> in {
+	template node<T> in {
+		value:T;
+		next:node<T>;
+		init:void(value:T) => {
+			self.value = value;
+		};
+	};
+	head:node<T>;
+	push:void(value:T) => {
+		is head == false then {
+			head = new node<T>(value);
+		} else {
+			curr:node<T> = head;
+			is curr.next do {
+				curr = curr.next;
+			};
+			curr.next = new node<T>(value);
+		};
+	};
+	pop:void() => {
+		curr:node<T> = head;
+		prev:node<T>;
+		is curr.next do {
+			prev = curr;
+			curr = curr.next;
+		};
+		is prev then {
+			rem prev.next;
+		} else {
+			rem head;
+		};
+	};
+	to_arr:T[~]() => {
+		arr:T[~] = [];
+		curr:node<T> = head;
+		is curr do {
+			arr = arr + [ curr.value ];
+			curr = curr.next;
+		};
+		return arr;
+	};
+	`[]`:T(pos:long) => {
+		l:long = 0;
+		curr:node<T> = head;
+		is curr do {
+			l == pos then {
+				return &(curr.value);
+			};
+			l = l + 1;
+			curr = curr.next;
+		};
+	};
+	size:long() => {
+		l:long = 0;
+		curr:node<T> = head;
+		is curr do {
+			l = l + 1;
+			curr = curr.next;
+		};
+		return l;
+	};
+	@:T[~]() => {
+		return to_arr();
+	};
+};

@@ -73,7 +73,9 @@ enum NodeType
 	B_AND,
 
 	FLAG_POINTER,
-	U_LEN
+	U_LEN,
+	U_IS,
+	U_REM
 };
 
 struct DataType
@@ -271,6 +273,11 @@ static DataPoint string_to_data(const std::string &s)
 	DataPoint r(dp);
 	r.dt.is_array = true;
 	return r;
+}
+
+constexpr unsigned int str2int(const char* str, int h = 0)
+{
+    return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
 }
 
 #endif

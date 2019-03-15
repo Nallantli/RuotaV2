@@ -5,89 +5,91 @@ std::string RuotaWrapper::curr_file = "";
 std::string RuotaWrapper::current_dir = "";
 
 std::unordered_map<std::string, int> RuotaWrapper::operators = {
-		{"load", 999},
-		{"PASS_REG", 999},
-		{".index", 14},
-		{".exec", 14},
-		{"from", 13},
-		{".generic", 14},
-		{"struct", 13},
-		{"template", 16},
-		{"new", 13},
-		{"return", 2},
-		{"::", 13},
-		{"!", -14},
-		{".!", -14},
-		{".", 14},
-		{"->", 3},
-		{"=>", 12},
-		{"len", -11},
-		{"&", -3},
-		{".negate", -11},
-		{".positive", -11},
-		{"**", -10},
-		{".**", -10},
-		{"*", 9},
-		{".*", 9},
-		{"/", 9},
-		{"./", 9},
-		{"%", 9},
-		{".%", 9},
-		{"+", 8},
-		{".+", 8},
-		{"..", 8},
-		{"|", 7},
-		{"-", 8},
-		{".-", 8},
-		{":", 13},
-		{"<:", 7},
-		{":>", 7},
-		{"<:>", 7},
-		{"==", 6},
-		{".=", 6},
-		{".==", 6},
-		{"!=", 6},
-		{".!=", 6},
-		{"<", 6},
-		{".<", 6},
-		{">", 6},
-		{".>", 6},
-		{"<=", 6},
-		{".<=", 6},
-		{">=", 6},
-		{".>=", 6},
-		{"&&", 5},
-		{"||", 5},
-		{"=", -4},
-		{"+=", -4},
-		{".+=", -4},
-		{"-=", -4},
-		{".-=", -4},
-		{"*=", -4},
-		{".*=", -4},
-		{"/=", -4},
-		{"./=", -4},
-		{"%=", -4},
-		{".%=", -4},
-		{"**=", -4},
-		{".**=", -4},
-		{"..=", -4},
-		{"++=", -4},
-		{":=", -4},
-		{"&=", -4},
-		{":&", -4},
-		{":&=", -4},
-		{"in", 3},
-		{"switch", 3},
-		{"do", 3},
-		{"->>", -3},
-		{"then", 3},
-		{"else", -3},
-		{"detach", -2},
-		{"try", -16},
-		{"catch", 15},
-		{",", 2},
-		{";", -1}};
+    {"load", 999},
+    {"PASS_REG", 999},
+    {".index", 14},
+    {".exec", 14},
+    {"from", 13},
+    {".generic", 14},
+    {"struct", 13},
+    {"template", 16},
+    {"new", 13},
+    {"return", 2},
+    {"::", 13},
+    {"!", -14},
+    {".!", -14},
+    {".", 14},
+    {"->", 3},
+    {"=>", 12},
+    {"len", -11},
+    {"is", -11},
+    {"rem", -11},
+    {"&", -3},
+    {".negate", -11},
+    {".positive", -11},
+    {"**", -10},
+    {".**", -10},
+    {"*", 9},
+    {".*", 9},
+    {"/", 9},
+    {"./", 9},
+    {"%", 9},
+    {".%", 9},
+    {"+", 8},
+    {".+", 8},
+    {"..", 8},
+    {"|", 7},
+    {"-", 8},
+    {".-", 8},
+    {":", 13},
+    {"<:", 7},
+    {":>", 7},
+    {"<:>", 7},
+    {"==", 6},
+    {".=", 6},
+    {".==", 6},
+    {"!=", 6},
+    {".!=", 6},
+    {"<", 6},
+    {".<", 6},
+    {">", 6},
+    {".>", 6},
+    {"<=", 6},
+    {".<=", 6},
+    {">=", 6},
+    {".>=", 6},
+    {"&&", 5},
+    {"||", 5},
+    {"=", -4},
+    {"+=", -4},
+    {".+=", -4},
+    {"-=", -4},
+    {".-=", -4},
+    {"*=", -4},
+    {".*=", -4},
+    {"/=", -4},
+    {"./=", -4},
+    {"%=", -4},
+    {".%=", -4},
+    {"**=", -4},
+    {".**=", -4},
+    {"..=", -4},
+    {"++=", -4},
+    {":=", -4},
+    {"&=", -4},
+    {":&", -4},
+    {":&=", -4},
+    {"in", 3},
+    {"switch", 3},
+    {"do", 3},
+    {"->>", -3},
+    {"then", 3},
+    {"else", -3},
+    {"detach", -2},
+    {"try", -16},
+    {"catch", 15},
+    {",", 2},
+    {";", -1}};
 
 RuotaWrapper::RuotaWrapper(std::string current_dir)
 {
@@ -101,9 +103,8 @@ Node RuotaWrapper::parseLine(const std::string &line, const std::string &local_f
     auto tokens = T->tokenize(line);
     tokens = T->infixToPostfix(tokens);
     std::vector<Node> stack;
-    /*  for (auto &t : tokens)
+    /*for (auto &t : tokens)
         std::cout << t << "\t";*/
-
 
     for (auto &t : tokens)
     {
@@ -248,8 +249,8 @@ Node RuotaWrapper::parseLine(const std::string &line, const std::string &local_f
                         auto gen = parseLine(content, path).params;
                         this->path = local_file;
                         this->curr_file = old_file;
-                            for (auto &p : gen)
-                                stack.push_back(p);
+                        for (auto &p : gen)
+                            stack.push_back(p);
                     }
                     else
                     {
@@ -277,6 +278,18 @@ Node RuotaWrapper::parseLine(const std::string &line, const std::string &local_f
                 Node a_ = stack.back();
                 stack.pop_back();
                 stack.push_back(Node(B_MUL, {a_, Node(DataPoint((int)-1))}));
+            }
+            else if (t == "is")
+            {
+                Node a_ = stack.back();
+                stack.pop_back();
+                stack.push_back(Node(U_IS, {a_, Node(DataPoint((int)-1))}));
+            }
+            else if (t == "rem")
+            {
+                Node a_ = stack.back();
+                stack.pop_back();
+                stack.push_back(Node(U_REM, {a_, Node(DataPoint((int)-1))}));
             }
             else if (t == "&")
             {

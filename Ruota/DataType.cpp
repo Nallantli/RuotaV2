@@ -29,7 +29,7 @@ DataType::DataType(
 
 DataType::DataType(
 	std::vector<Node> prototype,
-	Scope * proto_object,
+	Scope *proto_object,
 	std::string data_type,
 	std::vector<DataType> qualifiers,
 	bool is_array,
@@ -138,31 +138,33 @@ const unsigned long long DataType::getFullDim() const
 
 const bool DataType::isBaseNumber() const
 {
-	if (equals("int"))
+	if (is_array || is_lambda)
+		return false;
+	switch (str2int(data_type.c_str()))
+	{
+	case str2int("int"):
+	case str2int("long"):
+	case str2int("short"):
+	case str2int("char"):
+	case str2int("bool"):
+	case str2int("double"):
+	case str2int("float"):
+	case str2int("void"):
 		return true;
-	if (equals("long"))
-		return true;
-	if (equals("short"))
-		return true;
-	if (equals("char"))
-		return true;
-	if (equals("bool"))
-		return true;
-	if (equals("double"))
-		return true;
-	if (equals("float"))
-		return true;
-	if (equals("void"))
-		return true;
-	return false;
+	default:
+		return false;
+	}
 }
 
-Scope * DataType::getProtoObject() {
+Scope *DataType::getProtoObject()
+{
 	return proto_object;
 }
 
-DataType::~DataType() {
-	if (proto_object != NULL) {
+DataType::~DataType()
+{
+	if (proto_object != NULL)
+	{
 		proto_object->references--;
 		//std::cout << "REF\t" << proto_object->references << "\t" << getString() << std::endl;
 	}

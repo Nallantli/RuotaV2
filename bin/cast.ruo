@@ -42,8 +42,8 @@ cast :: {
     int:int(v:char) => { return v; };
     int:int(v:bool) => { return v; };
     int:int(c:char[~]) => {
-        i:int = (console_to_number PASS_REG [0, c])[0];
-        return i;
+        i:int[~] = console_to_number PASS_REG [0, c];
+        return i[0];
     };
 
     # long Conversions
@@ -55,8 +55,8 @@ cast :: {
     long:long(v:char) => { return v; };
     long:long(v:bool) => { return v; };
     long:long(c:char[~]) => {
-        v:long = (console_to_number PASS_REG [1, c])[0];
-        return v;
+        v:long[~] = console_to_number PASS_REG [1, c];
+        return v[0];
     };
     
     # short Conversions
@@ -68,8 +68,8 @@ cast :: {
     short:short(v:char) => { return v; };
     short:short(v:bool) => { return v; };
     short:short(c:char[~]) => {
-        v:short = (console_to_number PASS_REG [0, c])[0];
-        return v;
+        v:short[~] = console_to_number PASS_REG [0, c];
+        return v[0];
     };
 
     # char Conversions
@@ -81,12 +81,12 @@ cast :: {
     char:char(v:char) => { return v; };
     char:char(v:bool) => { return v; };
     char:char(c:char[~]) => {
-        v:char = (console_to_number PASS_REG [0, c])[0];
-        return v;
+        v:char[~] = console_to_number PASS_REG [0, c];
+        return v[0];
     };
 
     double:double(c:char[~]) => {
-        d:double = (console_to_number PASS_REG [3, c])[0];
-        return d;
+        v:double[~] = console_to_number PASS_REG [3, c];
+        return v[0];
     };
 };

@@ -244,10 +244,14 @@ DataPoint Node::evaluate(Scope *scope) const
                     for (auto &g : current->generics)
                     {
                         if (g.first == params[0].values[0])
+                        {
                             flag = true;
+                        }
                     }
                     if (flag)
+                    {
                         break;
+                    }
                     current = current->parent;
                 }
                 if (current != NULL)
@@ -506,6 +510,24 @@ DataPoint Node::evaluate(Scope *scope) const
     {
         DataPoint a_ = params[0].evaluate(scope);
         return DataPoint((long)a_.getVector().size());
+    }
+    case U_IS:
+    {
+        DataPoint a_ = params[0].evaluate(scope);
+        if (a_.dpn == VAR_REF)
+        {
+            return DataPoint((bool)(a_.value_ref->value_object != NULL));
+        }
+        else
+        {
+            return DataPoint((bool)(a_.value_object != NULL));
+        }
+    }
+    case U_REM:
+    {
+        DataPoint a_ = params[0].evaluate(scope);
+        a_.setObject(NULL);
+        return a_;
     }
     case B_REG:
     {

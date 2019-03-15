@@ -1,0 +1,54 @@
+template array <K> in {
+	arr:K[~];
+	length:long = 0;
+	push:void(value:K) => {
+		length = length + 1;
+		length >= len arr then {
+			grow();
+		};
+		arr[length-1] = value;
+	};
+	`[]`:K(pos:long) => {
+		return &(arr[pos]);
+	};
+	pop:void() => {
+		length = length - 1;
+	};
+	grow:void() => {
+		new_arr:K[(len arr + 1) * 2];
+		l:long in [long -> 0 .. (len arr)] do {
+			new_arr[l] = arr[l];
+		};
+		arr = new_arr;
+	};
+	back:K() => {
+		return &(arr[length - 1]);
+	};
+	size:long() => {
+		return length;
+	};
+	to_arr:K[~]() => {
+		new_arr:K[length];
+		l:long in [long -> 0 .. length] do {
+			new_arr[l] = arr[l];
+		};
+		return new_arr;
+	};
+	`==`:bool(a:array<K>) => {
+		length != a.length then {
+			return false;
+		} else {
+			return to_arr() == a.to_arr();
+		};
+	};
+	`==`:bool(a:K[~]) => {
+		length != len a then {
+			return false;
+		} else {
+			return to_arr() == a;
+		};
+	};
+	@:K[~]() => {
+		return to_arr();
+	};
+};

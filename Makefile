@@ -1,12 +1,10 @@
 CC=g++
-CFLAGS=-Ofast -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -DBOOST_SYSTEM_NO_DEPRECATED -lws2_32 -g
+CFLAGS=-Ofast -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -lpthread -lm -ldl -DBOOST_SYSTEM_NO_DEPRECATED -g
 
-all: win32
+all: bin/ruota.out
 
-win32: bin/ruota.exe
-
-bin/ruota.exe: Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o
-	$(CC) -o bin/ruota.exe Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o $(CFLAGS)
+bin/ruota.out: Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o
+	$(CC) -o bin/ruota.out Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o $(CFLAGS)
 
 Compiled/Main.o: Main.cpp Ruota/Ruota.h
 	$(CC) Main.cpp -o Compiled/Main.o -c $(CFLAGS)

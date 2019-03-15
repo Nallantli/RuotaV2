@@ -119,34 +119,45 @@ system :: {
 term :: {
     color :: {
         BLACK:int = 0;
-        BLUE:int = 1;
+        RED:int = 1;
         GREEN:int = 2;
-        CYAN:int = 3;
-        RED:int = 4;
+        YELLOW:int = 3;
+        BLUE:int = 4;
         MAGENTA:int = 5;
-        YELLOW:int = 6;
+        CYAN:int = 6;
         WHITE:int = 7;
         GREY:int = 8;
         GRAY:int = 8;
         BRIGHT_BLACK:int = 8;
-        BRIGHT_BLUE:int = 9;
+        BRIGHT_RED:int = 9;
         BRIGHT_GREEN:int = 10;
-        BRIGHT_CYAN:int = 11;
-        BRIGHT_RED:int = 12;
+        BRIGHT_YELLOW:int = 11;
+        BRIGHT_BLUE:int = 12;
         BRIGHT_MAGENTA:int = 13;
-        BRIGHT_YELLOW:int = 14;
+        BRIGHT_CYAN:int = 14;
         BRIGHT_WHITE:int = 15;
-        set:void(i:int) => {
-            console_color PASS_REG [i];
+        setfg:void(i:int) => {
+            console_fore_color PASS_REG [i];
+        };
+        setbg:void(i:int) => {
+            console_back_color PASS_REG [i];
         };
         map:void() => {
-            i:int in [int -> 0 .. 16] do {
-                j:int in [int -> 0 .. 16] do {
-                    set(i * 16 + j);
-                    print(cast.str(i * 16 + j) + "\t");
+            i:int in [int -> 0 .. 256] do {
+                i % 16 == 0 then {
+                    setbg(0);
+                    print("\n");
                 };
-                print("\n");
+                setbg(i);
+                i < 10 then {
+                    print(" 00" + cast.str(i));
+                } else i < 100 then {
+                    print(" 0" + cast.str(i));
+                } else {
+                    print(" " + cast.str(i))
+                };
             };
+            setbg(16);
         };
     };
 };
