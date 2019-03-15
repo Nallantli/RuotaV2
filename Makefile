@@ -1,10 +1,10 @@
 CC=g++
 CFLAGS=-Ofast -std=gnu++17 -lboost_system -lboost_filesystem -lboost_thread -lpthread -lm -ldl -DBOOST_SYSTEM_NO_DEPRECATED -g
 
-all: bin/ruota.out
+all: bin/ruota
 
-bin/ruota.out: Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o
-	$(CC) -o bin/ruota.out Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o $(CFLAGS)
+bin/ruota: Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o
+	$(CC) -o bin/ruota Compiled/Main.o Compiled/DataType.o Compiled/FileIO.o Compiled/RuotaWrapper.o Compiled/Tokenizer.o Compiled/Scope.o Compiled/Lambda.o Compiled/Node.o Compiled/DataPoint.o Compiled/Console.o $(CFLAGS)
 
 Compiled/Main.o: Main.cpp Ruota/Ruota.h
 	$(CC) Main.cpp -o Compiled/Main.o -c $(CFLAGS)
